@@ -1,41 +1,37 @@
-package assistant
+package inventory
 
 import "encoding/json"
 
 // Test - unified test format.
-type Test[A, E any] struct {
+type Test[I, O any] struct {
 	// Title - allows you to set a short title that can be easily found when needed.
 	Title string `json:"title"`
 	// Description - allows you to add an extended description for the test (improves the readability of tests).
 	Description string `json:"description"`
-	// Actual - behavior to obtain the result of a query.
-	// Note: use assistant.Actual or assistant.ActualWithBehaviour as a base solutions.
-	Actual A `json:"actual"`
-	// Expect - expected behavior based on query result.
-	// Note: use assistant.Expect as a base solution.
-	Expect E `json:"expect"`
+	// Arguments - can use a query model/structure with a struct (if multiple arguments are required).
+	// * Note: use inventory.In as a base solution.
+	// * Can be replaced with any custom solution.
+	In I `json:"in"`
+	// Results - expected results.
+	// * Note: use inventory.Out as a base solution.
+	// * Can be replaced with any custom solution.
+	Out O `json:"out"`
 }
 
-// Actual - unified actual format.
-type Actual[A any] struct {
-	// Arguments - can use a query model/structure with a struct (if multiple arguments are required).
+// In - unified in test format.
+type In[A any] struct {
+	// Arguments - can use a query model/structure with a struct (if multiple results are required).
 	Arguments A `json:"arguments"`
 }
 
-// ActualWithBehaviour - unified actual format.
-type ActualWithBehaviour[A any, B any] struct {
-	// Arguments - can use a query model/structure with a struct (if multiple arguments are required).
-	Arguments A `json:"arguments"`
-	// Behaviour - allows you to pass the model as a source of behavior for further use in tests.
-	Behaviour B `json:"behaviour"`
-}
-
-// Expect - unified expect format.
-type Expect[R, E any] struct {
-	// Returns - can use a query model/structure with a struct (if multiple results are required).
-	Returns R `json:"returns"`
-	// Error - error structure as a result of the operation of the entity being tested.
-	// Note: use assistant.Error as a base solution.
+// Out - for the case when a function returns only two values:
+// the result itself and an error, it is best to use this composition.
+type Out[R, E any] struct {
+	// Result - can use a query model/structure with a struct (if multiple results are required).
+	Result R `json:"result"`
+	// Error - returned error.
+	// * Note: use assistant.Error to maintain consistency in test presentation.
+	// * If an error is not required, then use any type.
 	Error E `json:"error"`
 }
 

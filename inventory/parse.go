@@ -1,12 +1,21 @@
-package assistant
+package inventory
 
 import (
 	"embed"
 	"encoding/json"
+	"errors"
 	"fmt"
 )
 
-// ParseTests - parse test data from JSON.
+// Parse errors.
+var (
+	// ErrNotFoundTestData - no date found for downloading tests.
+	ErrNotFoundTestData = errors.New("no date found for downloading tests")
+	// ErrNotFoundTests - tests could not be found.
+	ErrNotFoundTests = errors.New("tests could not be found")
+)
+
+// ParseTests - parse test data_assistant from JSON.
 func ParseTests[T any](raw []byte) (tests []T, err error) {
 	if len(raw) == 0 {
 		return nil, ErrNotFoundTestData
@@ -23,7 +32,7 @@ func ParseTests[T any](raw []byte) (tests []T, err error) {
 	return tests, nil
 }
 
-// MustLoadTests - must parse test data from JSON.
+// MustLoadTests - must parse test data_assistant from JSON.
 func MustLoadTests[T any](raw []byte) (tests []T) {
 	var err error
 
@@ -34,7 +43,7 @@ func MustLoadTests[T any](raw []byte) (tests []T) {
 	return tests
 }
 
-// ParseTestsFromFS - parse test data from JSON by path.
+// ParseTestsFromFS - parse test data_assistant from JSON by path.
 func ParseTestsFromFS[T any](fs embed.FS, path string) (tests []T, err error) {
 	file, err := fs.ReadFile(path)
 	if err != nil {
@@ -49,7 +58,7 @@ func ParseTestsFromFS[T any](fs embed.FS, path string) (tests []T, err error) {
 	return tests, nil
 }
 
-// MustLoadTestsFromFS - must parse test data from JSON by path.
+// MustLoadTestsFromFS - must parse test data_assistant from JSON by path.
 func MustLoadTestsFromFS[T any](fs embed.FS, path string) (tests []T) {
 	var err error
 

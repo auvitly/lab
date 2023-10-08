@@ -1,9 +1,0 @@
-[
-  {
-    "expect": {
-      "error": {
-        "message": "test"
-      }
-    }
-  }
-]

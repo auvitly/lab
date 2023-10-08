@@ -47,8 +47,8 @@ func IsLimit(ctx context.Context, key string) bool {
 	return counter >= limit
 }
 
-// Counter - returns counter by key from Assistant.
-func Counter(ctx context.Context, key string) (int, bool) {
+// GetCounter - returns counter by key from Assistant.
+func GetCounter(ctx context.Context, key string) (int, bool) {
 	a, err := fromContext(ctx)
 	if err != nil {
 		return 0, false
@@ -62,8 +62,8 @@ func Counter(ctx context.Context, key string) (int, bool) {
 	return counter, ok
 }
 
-// Flag - returns flag by key from Assistant.
-func Flag(ctx context.Context, key string) (bool, bool) {
+// GetFlag - returns flag by key from Assistant.
+func GetFlag(ctx context.Context, key string) (bool, bool) {
 	a, err := fromContext(ctx)
 	if err != nil {
 		return false, false
@@ -77,8 +77,8 @@ func Flag(ctx context.Context, key string) (bool, bool) {
 	return flag, ok
 }
 
-// Value - returns the value by key from Assistant according to the set type.
-func Value[T any](ctx context.Context, key string) (result T, ok bool) {
+// GetValue - returns the value by key from Assistant according to the set type.
+func GetValue[T any](ctx context.Context, key string) (result T, ok bool) {
 	a, err := fromContext(ctx)
 	if err != nil {
 		return result, false
