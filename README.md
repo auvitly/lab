@@ -1,12 +1,12 @@
 <p align="center">
-  <img alt="logo" src="doc/img/icon.png" height="100" />
+  <img alt="logo" src="docs/img/icon.png" height="100" />
   <h3 align="center">Lab</h3>
   <p align="center">Have fun testing your code!</p>
 </p>
 
 ---
 
-Package `lab` provides tools for organizing table tests.
+Package `lab` provides toolkit for organizing table tests.
 
 --- 
 
@@ -21,3 +21,8 @@ go get github.com/auvitly/lab
 ```go
 import "github.com/auvitly/lab/inventory"
 ```
+
+## Documentation
+
+* [English - EN](docs/lang/README_EN.md)
+* [Русский - RU](docs/lang/README_RU.md)
