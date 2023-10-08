@@ -1,20 +1,25 @@
 package assistant_test
 
 import (
-	"context"
 	"github.com/auvitly/assistant/assistant"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestAssistant(t *testing.T) {
-	ctx, cancel := assistant.NewContextAssistant().
-		WithValue("key", "test").
-		OnContext(context.Background())
+	data := map[string]any{
+		"title": t.Name(),
+		"dir":   t.TempDir(),
+	}
 
-	defer cancel()
+	ctx := assistant.New().
+		WithValues(data).
+		NewContext()
 
-	result, _ := assistant.GetValue[string](ctx, "key")
+	ctx = assistant.New().
+		WithValue("title", "test").
+		Context(ctx)
 
-	assert.Equal(t, result, "test")
+	assert.Equal(t, "test", assistant.GetValue[string](ctx, "title"))
+	assert.Equal(t, data["dir"], assistant.GetValue[string](ctx, "dir"))
 }

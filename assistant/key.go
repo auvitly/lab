@@ -15,6 +15,6 @@ func newKey() string {
 }
 
 var (
-	// Key for the context in which the assistant will be stored.
-	key = newKey()
+	// assistantKey - key for the context in which the assistant will be stored.
+	assistantKey = newKey()
 )
