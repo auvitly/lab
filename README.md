@@ -13,7 +13,7 @@ Package `lab` provides tools for organizing table tests.
 ## Install tools
 
 1. Add tools to your project.
-``` 
+```bash
 go get github.com/auvitly/lab
 ```
 
