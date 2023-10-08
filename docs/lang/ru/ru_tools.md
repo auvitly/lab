@@ -55,7 +55,7 @@ func Multiply(a, b float64) (float64, error) {
 var data 
 
 func TestMultiply(t *testing.T) {
-    var tests = inventory.MustLoadTestsFromFS[inventory.Test[
+    var tests = inventory.MustLoadTestsFromFS[*inventory.Test[
         struct {
             A float64 `json:"a"`
             B float64 `json:"b"`
@@ -124,7 +124,7 @@ func TestMultiply(t *testing.T) {
 var data 
 
 func TestMethod(t *testing.T) {
-    var tests = inventory.MustLoadTestsFromFS[inventory.Test[
+    var tests = inventory.MustLoadTestsFromFS[*inventory.Test[
         inventory.In[method.Arguments],
         inventory.Out[method.Results, *inventory.Error],
     ]](fs, fmt.Sprintf("test/%s.json", t.Name()))

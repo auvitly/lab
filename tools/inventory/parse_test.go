@@ -11,7 +11,7 @@ import (
 var fs embed.FS
 
 func TestMustParseTestsFromFS(t *testing.T) {
-	var tests = inventory.MustLoadTestsFromFS[inventory.Test[
+	var tests = inventory.MustLoadTestsFromFS[*inventory.Test[
 		inventory.In[any],
 		inventory.Out[
 			any,

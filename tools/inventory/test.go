@@ -2,6 +2,11 @@ package inventory
 
 import "encoding/json"
 
+// Tester - test interface.
+type Tester interface {
+	test()
+}
+
 // Test - unified test format.
 type Test[I, O any] struct {
 	// Title - allows you to set a short title that can be easily found when needed.
@@ -17,6 +22,8 @@ type Test[I, O any] struct {
 	// * Can be replaced with any custom solution.
 	Out O `json:"out"`
 }
+
+func (t *Test[I, O]) test() {}
 
 // In - unified in test format.
 type In[A any] struct {

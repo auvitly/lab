@@ -1,21 +1,13 @@
 package behavior
 
+import "github.com/auvitly/lab/tools/inventory"
+
 // Test - unified test format.
-type Test[I, B, O any] struct {
-	// Title - allows you to set a short title that can be easily found when needed.
-	Title string `json:"title"`
-	// Description - allows you to add an extended description for the test (improves the readability of tests).
-	Description string `json:"description"`
+type Test[I, O any, B any] struct {
+	// Embedding the inventory.Test.
+	inventory.Test[I, O]
 	// Behaviour - dependency behavior.
 	Behaviour B `json:"behavior"`
-	// Arguments - can use a query model/structure with a struct (if multiple arguments are required).
-	// * Note: use inventory.In as a base solution.
-	// * Can be replaced with any custom solution.
-	In I `json:"in"`
-	// Results - expected results.
-	// * Note: use inventory.Out as a base solution.
-	// * Can be replaced with any custom solution.
-	Out O `json:"out"`
 }
 
 //// Behaviour errors.

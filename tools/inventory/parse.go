@@ -16,7 +16,7 @@ var (
 )
 
 // ParseTests - parse test data_assistant from JSON.
-func ParseTests[T any](raw []byte) (tests []T, err error) {
+func ParseTests[T Tester](raw []byte) (tests []T, err error) {
 	if len(raw) == 0 {
 		return nil, ErrNotFoundTestData
 	}
@@ -33,7 +33,7 @@ func ParseTests[T any](raw []byte) (tests []T, err error) {
 }
 
 // MustLoadTests - must parse test data_assistant from JSON.
-func MustLoadTests[T any](raw []byte) (tests []T) {
+func MustLoadTests[T Tester](raw []byte) (tests []T) {
 	var err error
 
 	if tests, err = ParseTests[T](raw); err != nil {
@@ -44,7 +44,7 @@ func MustLoadTests[T any](raw []byte) (tests []T) {
 }
 
 // ParseTestsFromFS - parse test data_assistant from JSON by path.
-func ParseTestsFromFS[T any](fs embed.FS, path string) (tests []T, err error) {
+func ParseTestsFromFS[T Tester](fs embed.FS, path string) (tests []T, err error) {
 	file, err := fs.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("fs.ReadFile: %w", err)
@@ -59,7 +59,7 @@ func ParseTestsFromFS[T any](fs embed.FS, path string) (tests []T, err error) {
 }
 
 // MustLoadTestsFromFS - must parse test data_assistant from JSON by path.
-func MustLoadTestsFromFS[T any](fs embed.FS, path string) (tests []T) {
+func MustLoadTestsFromFS[T Tester](fs embed.FS, path string) (tests []T) {
 	var err error
 
 	tests, err = ParseTestsFromFS[T](fs, path)
