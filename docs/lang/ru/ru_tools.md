@@ -49,7 +49,7 @@ func Multiply(a, b float64) (float64, error) {
 }
 ```
 
-Как тогда будет выглядеть тест:
+Тест:
 ```go
 //go:embed test
 var data 
@@ -86,7 +86,7 @@ func TestMultiply(t *testing.T) {
 }
 ```
 
-Тестовые данные, которые находятся `test/TestDivide.json`
+Тестовые данные из файла `test/TestDivide.json`:
 ```json
 [
   {
