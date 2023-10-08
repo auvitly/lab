@@ -1,7 +1,7 @@
 package assistant_test
 
 import (
-	"github.com/auvitly/assistant/assistant"
+	"github.com/auvitly/lab/tools/assistant"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

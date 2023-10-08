@@ -1,0 +1,24 @@
+[
+  {
+    "title": "ok",
+    "in": {
+      "a": 1,
+      "b": 2
+    },
+    "out": {
+      "c": 0.5
+    }
+  },
+  {
+    "title": "not ok",
+    "in": {
+      "a": 2,
+      "b": 0
+    },
+    "out": {
+      "error": {
+        "message": "сan't divide by zero"
+      }
+    }
+  }
+]

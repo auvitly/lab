@@ -2,7 +2,7 @@ package inventory_test
 
 import (
 	"embed"
-	"github.com/auvitly/assistant/inventory"
+	"github.com/auvitly/lab/tools/inventory"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
@@ -17,7 +17,7 @@ func TestMustParseTestsFromFS(t *testing.T) {
 			any,
 			*inventory.Error,
 		],
-	]](fs, "test/data/parse/TestMustParseTestsFromFS.json")
+	]](fs, "test/test/parse/TestMustParseTestsFromFS.json")
 
 	require.GreaterOrEqual(t, len(tests), 1)
 }

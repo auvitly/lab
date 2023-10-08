@@ -1,8 +1,7 @@
 package gomock
 
 import (
-	"github.com/auvitly/assistant/behavior/internal/vendors/gomock/models"
-	errors "github.com/auvitly/assistant/models"
+	"github.com/auvitly/lab/addons/behavior/internal/vendors/gomock/models"
 	"reflect"
 )
 
@@ -13,7 +12,7 @@ func parseMock(mock any) (*models.Signature, error) {
 	case reflect.Pointer:
 		return parseMockSignature(typeOf)
 	default:
-		return nil, errors.ErrNonPointerValue
+		return nil, nil //errors.ErrNonPointerValue
 	}
 }
 
@@ -95,7 +94,7 @@ func obtainValue(valueOf reflect.Value) (reflect.Value, error) {
 	case valueOf.Kind() == reflect.Struct:
 		return valueOf, nil
 	default:
-		return reflect.Value{}, errors.ErrNonPointerValue
+		return reflect.Value{}, nil //errors.ErrNonPointerValue
 	}
 }
 

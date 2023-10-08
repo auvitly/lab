@@ -27,7 +27,7 @@ func New() *Assistant {
 
 // Context - applies the configuration to the parent context.
 // * The parent context can be nil, then a new one will be created.
-// * If the assistant already exists in the context, then the data will be taken from the
+// * If the assistant already exists in the context, then the test will be taken from the
 // * parent assistant and overwritten by the child.
 func (a *Assistant) Context(parent context.Context) context.Context {
 	// Check nil pointer.
@@ -41,11 +41,11 @@ func (a *Assistant) Context(parent context.Context) context.Context {
 	}
 	// If founder, when building new values.
 	var values = make(map[string]any)
-	// Copy data from parent assistant.
+	// Copy test from parent assistant.
 	for key, value := range founded.data {
 		values[key] = value
 	}
-	// Overwrite child assistant data.
+	// Overwrite child assistant test.
 	for key, value := range a.data {
 		values[key] = value
 	}

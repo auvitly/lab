@@ -1,4 +1,4 @@
-module github.com/auvitly/assistant
+module github.com/auvitly/lab
 
 go 1.19
 
