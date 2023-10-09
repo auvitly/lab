@@ -54,7 +54,7 @@ func Multiply(a, b float64) (float64, error) {
 //go:embed test
 var data 
 
-func TestMultiply(t *testing.T) {
+func TestDivide(t *testing.T) {
     var tests = inventory.MustLoadTestsFromFS[*inventory.Test[
         struct {
             A float64 `json:"a"`
