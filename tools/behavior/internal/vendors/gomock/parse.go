@@ -1,7 +1,7 @@
 package gomock
 
 import (
-	"github.com/auvitly/lab/addons/behavior/internal/vendors/gomock/models"
+	"github.com/auvitly/lab/tools/behavior/internal/vendors/gomock/models"
 	"reflect"
 )
 

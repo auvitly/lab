@@ -1,10 +1,14 @@
 package inventory
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+	"testing"
+)
 
 // Tester - test interface.
 type Tester interface {
-	test()
+	name(t *testing.T) string
 }
 
 // Test - unified test format.
@@ -23,7 +27,20 @@ type Test[I, O any] struct {
 	Out O `json:"out"`
 }
 
-func (t *Test[I, O]) test() {}
+func (test *Test[I, O]) name(t *testing.T) string {
+	t.Helper()
+
+	switch {
+	case len(test.Title) != 0 && len(test.Description) == 0:
+		return test.Title
+	case len(test.Title) != 0 && len(test.Description) != 0:
+		return test.Description
+	case len(test.Title) != 0 && len(test.Description) != 0:
+		return fmt.Sprintf("%s: %s", test.Title, test.Description)
+	default:
+		return t.Name()
+	}
+}
 
 // In - unified in test format.
 type In[A any] struct {

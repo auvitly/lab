@@ -1,0 +1,26 @@
+[
+  {
+    "title": "",
+    "behaviour": {
+      "AuthService": {
+        "Check": [
+          {
+            "in": {
+              "context": null,
+              "value": {
+                "message": "hello"
+              }
+            },
+            "out": {
+              "result": null,
+              "error": {
+                "message": "hello"
+              }
+            },
+            "times": -1
+          }
+        ]
+      }
+    }
+  }
+]

@@ -15,7 +15,7 @@ var fs embed.FS
 func TestDivide(t *testing.T) {
 	t.Parallel()
 
-	var tests = inventory.MustLoadTestsFromFS[*inventory.Test[
+	var tests = inventory.MustLoadTests[*inventory.Test[
 		struct {
 			A float64 `json:"a"`
 			B float64 `json:"b"`
