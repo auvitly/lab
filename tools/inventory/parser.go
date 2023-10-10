@@ -5,18 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-)
-
-// Parse errors.
-var (
-	// ErrFileConflictName - filename conflict with test data.
-	ErrFileConflictName = errors.New("filename conflict with test data")
-	// ErrFileNotFound - must be at least one test.
-	ErrFileNotFound = errors.New("file not found")
-	// ErrNotFoundTestData - not found test data.
-	ErrNotFoundTestData = errors.New("not found test data")
-	// ErrNotFoundTests - must be at least one test.
-	ErrNotFoundTests = errors.New("must be at least one test")
+	"reflect"
 )
 
 // loadTests - parser test data_assistant from JSON.
@@ -26,7 +15,7 @@ func loadTests[T Tester](raw []byte) (tests []T, err error) {
 	}
 
 	if err = json.Unmarshal(raw, &tests); err != nil {
-		return nil, fmt.Errorf("json.Unmarshal: %w", err)
+		return nil, fmt.Errorf("%w: %s", ErrParsing, err)
 	}
 
 	if len(tests) == 0 {
@@ -64,4 +53,40 @@ func MustLoadTests[T Tester](fs embed.FS, path string) (tests []T) {
 	}
 
 	return tests
+}
+
+// UnmarshalJSON - implementation json unmarshal interface.
+func (o *Out[R, E]) UnmarshalJSON(raw []byte) error {
+	switch {
+	case reflect.DeepEqual(reflect.TypeOf((*error)(nil)), reflect.TypeOf((*E)(nil))):
+		var out struct {
+			Result R      `json:"result"`
+			Error  string `json:"error"`
+		}
+
+		if err := json.Unmarshal(raw, &out); err != nil {
+			return fmt.Errorf("json.Unmarshal: %w", err)
+		}
+
+		o.Result = out.Result
+		if len(out.Error) != 0 {
+			o.Error = any(errors.New(out.Error)).(E)
+		}
+	case reflect.DeepEqual(reflect.TypeOf((*Empty)(nil)), reflect.TypeOf((*E)(nil))):
+		var out struct {
+			Result R `json:"result"`
+		}
+
+		if err := json.Unmarshal(raw, &out); err != nil {
+			return fmt.Errorf("json.Unmarshal: %w", err)
+		}
+
+		o.Result = out.Result
+	default:
+		if err := json.Unmarshal(raw, o); err != nil {
+			return fmt.Errorf("json.Unmarshal: %w", err)
+		}
+	}
+
+	return nil
 }

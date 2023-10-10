@@ -2,7 +2,6 @@ package inventory_test
 
 import (
 	"embed"
-	"fmt"
 	"github.com/auvitly/lab/tools/inventory"
 	"github.com/stretchr/testify/require"
 	"testing"
@@ -11,48 +10,6 @@ import (
 //go:embed test/data/run
 var run embed.FS
 
-func TestRun_Success(t *testing.T) {
-	err := inventory.Run(t, run, func(
-		t *testing.T,
-		test *inventory.Test[any, any],
-	) {
-		fmt.Println(test)
-	},
-	)
-	require.NoError(t, err, t.Name())
-}
-
-func TestRun_ErrNotFoundTests(t *testing.T) {
-	err := inventory.Run(t, run, func(
-		t *testing.T,
-		test *inventory.Test[any, any],
-	) {
-	},
-	)
-	require.Error(t, err, inventory.ErrNotFoundTests)
-}
-
-func TestRun_ErrNotFoundTestData(t *testing.T) {
-	err := inventory.Run(t, run,
-		func(
-			t *testing.T,
-			test *inventory.Test[any, any],
-		) {
-		},
-	)
-	require.Error(t, err, inventory.ErrNotFoundTestData)
-}
-
-func TestRun_ErrFileNotFound(t *testing.T) {
-	err := inventory.Run(t, run, func(
-		t *testing.T,
-		test *inventory.Test[any, any],
-	) {
-	},
-	)
-	require.Error(t, err, inventory.ErrFileNotFound)
-}
-
 func TestMustRun_Success(t *testing.T) {
 	defer func() {
 		require.Nil(t, recover(), t.Name())
@@ -60,7 +17,10 @@ func TestMustRun_Success(t *testing.T) {
 
 	inventory.MustRun(t, run, func(
 		t *testing.T,
-		test *inventory.Test[any, any],
+		test inventory.Test[
+			inventory.Empty,
+			*inventory.Out[inventory.Empty, error],
+		],
 	) {
 	},
 	)
@@ -73,7 +33,23 @@ func TestMustRun_ErrNotFoundTests(t *testing.T) {
 
 	inventory.MustRun(t, run, func(
 		t *testing.T,
-		test *inventory.Test[any, any],
+		test inventory.Test[
+			*inventory.In[inventory.Empty],
+			*inventory.Out[inventory.Empty, error],
+		],
+	) {
+	},
+	)
+}
+
+func TestMustRun_ErrFileConflictName(t *testing.T) {
+	defer func() {
+		require.ErrorIs(t, recover().(error), inventory.ErrFileConflictName, t.Name())
+	}()
+
+	inventory.MustRun(t, run, func(
+		t *testing.T,
+		test inventory.Test[inventory.Empty, inventory.Empty],
 	) {
 	},
 	)
@@ -86,7 +62,7 @@ func TestMustRun_ErrNotFoundTestData(t *testing.T) {
 
 	inventory.MustRun(t, run, func(
 		t *testing.T,
-		test *inventory.Test[any, any],
+		test inventory.Test[inventory.Empty, inventory.Empty],
 	) {
 	},
 	)
@@ -99,7 +75,7 @@ func TestMustRun_ErrFileNotFound(t *testing.T) {
 
 	inventory.MustRun(t, run, func(
 		t *testing.T,
-		test *inventory.Test[any, any],
+		test inventory.Test[inventory.Empty, inventory.Empty],
 	) {
 	},
 	)

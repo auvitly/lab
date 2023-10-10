@@ -1,7 +1,6 @@
 package inventory
 
 import (
-	"encoding/json"
 	"fmt"
 	"testing"
 )
@@ -11,35 +10,37 @@ type Tester interface {
 	name(t *testing.T) string
 }
 
+// Placeholder - interface for completing the test.
+type Placeholder interface {
+	placeholder()
+}
+
+// InPlaceholder - interface for 'in' test data.
+type InPlaceholder interface {
+	Placeholder
+	in()
+}
+
+// OutPlaceholder - interface for 'out' test data.
+type OutPlaceholder interface {
+	Placeholder
+	out()
+}
+
 // Test - unified test format.
-type Test[I, O any] struct {
+type Test[I InPlaceholder, O OutPlaceholder] struct {
 	// Title - allows you to set a short title that can be easily found when needed.
 	Title string `json:"title"`
 	// Description - allows you to add an extended description for the test (improves the readability of tests).
 	Description string `json:"description"`
 	// Arguments - can use a query model/structure with a struct (if multiple arguments are required).
-	// * Note: use inventory.In as a base solution.
+	// * Note: use inventory.In, inventory.Empty  as a base solution.
 	// * Can be replaced with any custom solution.
 	In I `json:"in"`
 	// Results - expected results.
-	// * Note: use inventory.Out as a base solution.
+	// * Note: use inventory.Out as a base solutions.
 	// * Can be replaced with any custom solution.
 	Out O `json:"out"`
-}
-
-func (test *Test[I, O]) name(t *testing.T) string {
-	t.Helper()
-
-	switch {
-	case len(test.Title) != 0 && len(test.Description) == 0:
-		return test.Title
-	case len(test.Title) != 0 && len(test.Description) != 0:
-		return test.Description
-	case len(test.Title) != 0 && len(test.Description) != 0:
-		return fmt.Sprintf("%s: %s", test.Title, test.Description)
-	default:
-		return t.Name()
-	}
 }
 
 // In - unified in test format.
@@ -50,51 +51,37 @@ type In[A any] struct {
 
 // Out - for the case when a function returns only two values:
 // the result itself and an error, it is best to use this composition.
-type Out[R, E any] struct {
+type Out[R any, E error] struct {
 	// Result - can use a query model/structure with a struct (if multiple results are required).
 	Result R `json:"result"`
 	// Error - returned error.
-	// * Note: use assistant.Error to maintain consistency in test presentation.
-	// * If an error is not required, then use any type.
+	// * Note: for the base case use the standard error interface.
 	Error E `json:"error"`
 }
 
-// Error - unified implementation of test error.
-type Error struct {
-	// message - error message.
-	message string `json:"message"`
+// Empty - placeholder in case there is no return value.
+type Empty struct{}
+
+func (t Test[I, O]) name(test *testing.T) string {
+	test.Helper()
+
+	switch {
+	case len(t.Title) != 0 && len(t.Description) == 0:
+		return t.Title
+	case len(t.Title) != 0 && len(t.Description) != 0:
+		return t.Description
+	case len(t.Title) != 0 && len(t.Description) != 0:
+		return fmt.Sprintf("%s: %s", t.Title, t.Description)
+	default:
+		return test.Name()
+	}
 }
 
-// UnmarshalJSON - implementation for json unmarshal.
-func (e *Error) UnmarshalJSON(raw []byte) error {
-	var temp struct {
-		Message string `json:"message"`
-	}
-
-	err := json.Unmarshal(raw, &temp)
-	if err != nil {
-		return err
-	}
-
-	e.message = temp.Message
-
-	return nil
-}
-
-// Error - trivial implementation of error.
-func (e *Error) Error() string {
-	if e == nil {
-		return ""
-	}
-
-	return e.message
-}
-
-// Extract - returns implementation of error
-func (e *Error) Extract() error {
-	if e == nil || len(e.message) == 0 {
-		return nil
-	}
-
-	return error(e)
-}
+func (*In[A]) placeholder()     {}
+func (*In[A]) in()              {}
+func (*Out[R, E]) placeholder() {}
+func (*Out[R, E]) out()         {}
+func (Empty) placeholder()      {}
+func (Empty) in()               {}
+func (Empty) out()              {}
+func (Empty) Error() string     { return "" }

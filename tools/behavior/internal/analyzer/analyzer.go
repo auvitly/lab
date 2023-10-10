@@ -9,7 +9,7 @@ func ObtainVendor(mock any) (vendor Vendor, err error) {
 	/*
 		// * Determine the type of each structure field.
 		typeOf := obtainType(reflect.TypeOf(behaviour))
-		// * Let's make sure that the structure is transferred!
+		// * Let's makefile sure that the structure is transferred!
 		if typeOf == nil || typeOf.Kind() != reflect.Struct {
 			return 0, errors.ErrNonPointerValue
 		}

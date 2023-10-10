@@ -48,7 +48,7 @@ func obtainPath(fs embed.FS, name string) (result string, err error) {
 	for _, entity := range entities {
 		if entity.IsDir() {
 			err = filepath.Walk(entity.Name(), func(path string, info os.FileInfo, err error) error {
-				if strings.Contains(info.Name(), name) {
+				if strings.Contains(info.Name(), fmt.Sprintf("%s.json", name)) {
 					founded = append(founded, path)
 				}
 

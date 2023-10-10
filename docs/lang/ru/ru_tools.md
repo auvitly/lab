@@ -49,103 +49,75 @@ func Multiply(a, b float64) (float64, error) {
 }
 ```
 
+Используя `tools/inventory` составим конструкцию для теста на основе функции `MustRun`.
+Структура теста является композицией двух интерфейсов: `InPlaceholder`, `OutPlaceholder`. Этим интерфейсам
+отвечают соответствующие структуры пакета `In` и `Out`. Также существует пустой заполнитель `Empty`, который можно
+применить вместо `InPlaceholder` или `OutPlaceholder`. 
+
 Тест:
+
 ```go
 //go:embed test
-var data 
+var fs embed.FS
 
 func TestDivide(t *testing.T) {
-    var tests = inventory.MustLoadTestsFromFS[*inventory.Test[
-        struct {
-            A float64 `json:"a"`
-            B float64 `json:"b"`
-        },
-        struct {
-            C     float64          `json:"c"`
-            Error *inventory.Error `json:"error"`
-        },
-    ]](fs, fmt.Sprintf("test/%s.json", t.Name()))
-
-    for i := range tests {
-        var test = tests[i]
+    t.Parallel()
+    
+    inventory.MustRun(t, fs, func(
+        t *testing.T,
+        test inventory.Test[
+            *inventory.In[struct {
+                A float64 `json:"a"`
+                B float64 `json:"b"`
+            }],
+            *inventory.Out[float64, error],
+        ],
+    ) {
+        result, err := divide.Divide(test.In.Arguments.A, test.In.Arguments.B)
+        if err != nil {
+            assert.EqualError(t, err, test.Out.Error.Error(), test.Title)
+            
+            return
+        }
         
-        t.Run(tests[i].Title, func(tt *testing.T) {
-            tt.Parallel()
-            
-            c, err := divide.Divide(test.In.A, test.In.B)
-            if err != nil {
-                assert.EqualError(tt, err, test.Out.Error.Error(), test.Title)
-            
-                return
-            }
-            
-            assert.NoError(tt, test.Out.Error.Extract(), test.Title)
-            assert.Equal(tt, c, test.Out.C, test.Title)
-        })
-    }	
+        assert.NoError(t, test.Out.Error, test.Title)
+        assert.Equal(t, result, test.Out.Result, test.Title)
+    })
 }
-```
 
-Тестовые данные из файла `test/TestDivide.json`:
+Файл с тестовыми данными при использовании функции `Run` или `MustRun` должен находится внутри `embed.FS`, 
+а название файла должно совпадать с именем теста (например, для текущего случая допустимое 
+расположение: `test/TestDivide.json`). Пакет самостоятельно обнаружит файл внутри каталога и загрузит данные,
+что позволяет разбивать каталоги на подкаталоги, чтобы обеспечить читаемость (например, `test/math/TestDivide.json`).
+Тестовые данные заполняются по шаблону, на основании JSON тегов `Test` и переданных типов `In`, `Out`:
+
 ```json
 [
   {
-    "title": "success",
+    "title": "ok",
     "in": {
-      "a": 1,
-      "b": 2
+      "arguments": {
+        "a": 1,
+        "b": 2
+      }
     },
     "out": {
-      "c": 0.5
+      "results": 0.5
     }
   },
   {
-    "title": "error",
+    "title": "not ok",
     "in": {
-      "a": 2,
-      "b": 0
+      "arguments": {
+        "a": 2,
+        "b": 0
+      }
     },
     "out": {
-      "error": {
-        "message": "сan't divide by zero"
-      }
+      "error": "сan't divide by zero"
     }
   }
 ]
 ```
 
-Все данные теста хранятся в файле названием теста, что позволяет сохранить простоту исходного файла 
-с тестом и легко найти файл с данными, в случае необходимости. А при большом числе тестов можно разбить каталог `test` на подкаталоги (например, `test/calc/TestDivide.json`).
-
-Если уже имеется подготовленная модель с данными, то тест становится проще. 
-Ниже представлен пример для случайного пакета `method` с подготовленными моделями для аргументов и результата.
-```go
-//go:embed test
-var data 
-
-func TestMethod(t *testing.T) {
-    var tests = inventory.MustLoadTestsFromFS[*inventory.Test[
-        inventory.In[method.Arguments],
-        inventory.Out[method.Results, *inventory.Error],
-    ]](fs, fmt.Sprintf("test/%s.json", t.Name()))
-
-    for i := range tests {
-        var test = tests[i]
-        
-        t.Run(tests[i].Title, func(tt *testing.T) {
-            tt.Parallel()
-            
-            result, err := method.Method(test.In.Arguments)
-            if err != nil {
-                assert.EqualError(tt, err, test.Out.Error.Error(), test.Title)
-            
-                return
-            }
-            
-            assert.NoError(tt, test.Out.Error.Extract(), test.Title)
-            assert.Equal(tt, result, test.Out.Result, test.Title)
-        })
-    }	
-}
-```
 <!-- #### 4.2 Тест сущности -->

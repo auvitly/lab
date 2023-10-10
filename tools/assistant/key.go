@@ -14,7 +14,5 @@ func newKey() string {
 	return hex.EncodeToString(sha.Sum([]byte{}))
 }
 
-var (
-	// assistantKey - key for the context in which the assistant will be stored.
-	assistantKey = newKey()
-)
+// assistantKey - key for the context in which the assistant will be stored.
+var assistantKey = newKey()
