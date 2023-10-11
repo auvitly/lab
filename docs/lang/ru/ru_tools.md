@@ -74,7 +74,7 @@ func TestDivide(t *testing.T) {
             *inventory.Out[float64, error],
         ],
     ) {
-        result, err := divide.Divide(test.In.Arguments.A, test.In.Arguments.B)
+        result, err := divide.Divide(test.In.Args.A, test.In.Args.B)
         if err != nil {
             assert.EqualError(t, err, test.Out.Error.Error(), test.Title)
             
@@ -98,7 +98,7 @@ func TestDivide(t *testing.T) {
   {
     "title": "ok",
     "in": {
-      "arguments": {
+      "args": {
         "a": 1,
         "b": 2
       }
@@ -110,7 +110,7 @@ func TestDivide(t *testing.T) {
   {
     "title": "not ok",
     "in": {
-      "arguments": {
+      "args": {
         "a": 2,
         "b": 0
       }
@@ -126,4 +126,4 @@ func TestDivide(t *testing.T) {
 > Пакет может интерпретировать строку как ошибку, вместе с тем поддерживая и другие модели удовлетворяющие интерфейсу `error`. 
 
 <a name="test_entities"></a>
-#### 4.2 Тест сущностей
+#### 4.2 Тест сущностей 

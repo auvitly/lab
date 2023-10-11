@@ -24,7 +24,7 @@ func TestDivide(t *testing.T) {
 			*inventory.Out[float64, error],
 		],
 	) {
-		result, err := divide.Divide(test.In.Arguments.A, test.In.Arguments.B)
+		result, err := divide.Divide(test.In.Args.A, test.In.Args.B)
 		if err != nil {
 			assert.EqualError(t, err, test.Out.Error.Error(), test.Title)
 

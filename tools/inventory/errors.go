@@ -14,4 +14,8 @@ var (
 	ErrNotFoundTests = errors.New("must be at least one test")
 	// ErrParsing - json parsing error.
 	ErrParsing = errors.New("json parsing error")
+	// ErrInitAddon - addon initialization error occurs.
+	ErrInitAddon = errors.New("init addon error")
+	// ErrCloseAddon - addon close error occurs.
+	ErrCloseAddon = errors.New("close addon error")
 )

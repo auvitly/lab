@@ -9,7 +9,7 @@ import (
 )
 
 // loadTests - parser test data_assistant from JSON.
-func loadTests[T Tester](raw []byte) (tests []T, err error) {
+func loadTests[T any](raw []byte) (tests []T, err error) {
 	if len(raw) == 0 {
 		return nil, ErrNotFoundTestData
 	}
@@ -26,7 +26,7 @@ func loadTests[T Tester](raw []byte) (tests []T, err error) {
 }
 
 // LoadTests - parser test data_assistant from JSON by path.
-func LoadTests[T Tester](fs embed.FS, path string) (tests []T, err error) {
+func LoadTests[T any](fs embed.FS, path string) (tests []T, err error) {
 	file, err := fs.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %s",
@@ -44,7 +44,7 @@ func LoadTests[T Tester](fs embed.FS, path string) (tests []T, err error) {
 }
 
 // MustLoadTests - must parser test data_assistant from JSON by path.
-func MustLoadTests[T Tester](fs embed.FS, path string) (tests []T) {
+func MustLoadTests[T any](fs embed.FS, path string) (tests []T) {
 	var err error
 
 	tests, err = LoadTests[T](fs, path)

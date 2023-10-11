@@ -1,4 +1,4 @@
-module github.com/auvitly/lab
+module github.com/auvitly/lab/tools
 
 go 1.19
 

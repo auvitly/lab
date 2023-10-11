@@ -2,7 +2,7 @@
   {
     "title": "ok",
     "in": {
-      "arguments": {
+      "args": {
         "a": 1,
         "b": 2
       }
@@ -14,7 +14,7 @@
   {
     "title": "not ok",
     "in": {
-      "arguments": {
+      "args": {
         "a": 2,
         "b": 0
       }

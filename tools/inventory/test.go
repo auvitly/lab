@@ -1,34 +1,7 @@
 package inventory
 
-import (
-	"fmt"
-	"testing"
-)
-
-// Tester - test interface.
-type Tester interface {
-	name(t *testing.T) string
-}
-
-// Placeholder - interface for completing the test.
-type Placeholder interface {
-	placeholder()
-}
-
-// InPlaceholder - interface for 'in' test data.
-type InPlaceholder interface {
-	Placeholder
-	in()
-}
-
-// OutPlaceholder - interface for 'out' test data.
-type OutPlaceholder interface {
-	Placeholder
-	out()
-}
-
 // Test - unified test format.
-type Test[I InPlaceholder, O OutPlaceholder] struct {
+type Test[I, O any] struct {
 	// Title - allows you to set a short title that can be easily found when needed.
 	Title string `json:"title"`
 	// Description - allows you to add an extended description for the test (improves the readability of tests).
@@ -45,8 +18,8 @@ type Test[I InPlaceholder, O OutPlaceholder] struct {
 
 // In - unified in test format.
 type In[A any] struct {
-	// Arguments - can use a query model/structure with a struct (if multiple results are required).
-	Arguments A `json:"arguments"`
+	// Args - can use a query model/structure with a struct (if multiple results are required).
+	Args A `json:"args"`
 }
 
 // Out - for the case when a function returns only two values:
@@ -62,26 +35,4 @@ type Out[R any, E error] struct {
 // Empty - placeholder in case there is no return value.
 type Empty struct{}
 
-func (t Test[I, O]) name(test *testing.T) string {
-	test.Helper()
-
-	switch {
-	case len(t.Title) != 0 && len(t.Description) == 0:
-		return t.Title
-	case len(t.Title) != 0 && len(t.Description) != 0:
-		return t.Description
-	case len(t.Title) != 0 && len(t.Description) != 0:
-		return fmt.Sprintf("%s: %s", t.Title, t.Description)
-	default:
-		return test.Name()
-	}
-}
-
-func (*In[A]) placeholder()     {}
-func (*In[A]) in()              {}
-func (*Out[R, E]) placeholder() {}
-func (*Out[R, E]) out()         {}
-func (Empty) placeholder()      {}
-func (Empty) in()               {}
-func (Empty) out()              {}
-func (Empty) Error() string     { return "" }
+func (Empty) Error() string { return "" }
