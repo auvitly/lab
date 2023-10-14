@@ -1,5 +1,25 @@
 package inventory
 
+import (
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io"
+	"reflect"
+)
+
+// Addon - interface for addon matching.
+// The addon allows you to enable add-ons that will finish their work along with test processing.
+type Addon interface {
+	Init() error
+	io.Closer
+}
+
+// TestData - interface that determines whether an entity is a test.
+type TestData interface {
+	TestName() string
+}
+
 // Test - unified test format.
 type Test[I, O any] struct {
 	// Title - allows you to set a short title that can be easily found when needed.
@@ -16,6 +36,11 @@ type Test[I, O any] struct {
 	Out O `json:"out"`
 }
 
+// TestName - function to get test name.
+func (t Test[I, O]) TestName() string {
+	return t.Title
+}
+
 // In - unified in test format.
 type In[A any] struct {
 	// Args - can use a query model/structure with a struct (if multiple results are required).
@@ -30,6 +55,42 @@ type Out[R any, E error] struct {
 	// Error - returned error.
 	// * Note: for the base case use the standard error interface.
 	Error E `json:"error"`
+}
+
+// UnmarshalJSON - implementation json unmarshal interface.
+func (o *Out[R, E]) UnmarshalJSON(raw []byte) error {
+	switch {
+	case reflect.DeepEqual(reflect.TypeOf((*error)(nil)), reflect.TypeOf((*E)(nil))):
+		var out struct {
+			Result R      `json:"result"`
+			Error  string `json:"error"`
+		}
+
+		if err := json.Unmarshal(raw, &out); err != nil {
+			return fmt.Errorf("json.Unmarshal: %w", err)
+		}
+
+		o.Result = out.Result
+		if len(out.Error) != 0 {
+			o.Error = any(errors.New(out.Error)).(E)
+		}
+	case reflect.DeepEqual(reflect.TypeOf((*Empty)(nil)), reflect.TypeOf((*E)(nil))):
+		var out struct {
+			Result R `json:"result"`
+		}
+
+		if err := json.Unmarshal(raw, &out); err != nil {
+			return fmt.Errorf("json.Unmarshal: %w", err)
+		}
+
+		o.Result = out.Result
+	default:
+		if err := json.Unmarshal(raw, o); err != nil {
+			return fmt.Errorf("json.Unmarshal: %w", err)
+		}
+	}
+
+	return nil
 }
 
 // Empty - placeholder in case there is no return value.

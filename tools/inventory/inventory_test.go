@@ -2,6 +2,7 @@ package inventory_test
 
 import (
 	"embed"
+	"github.com/auvitly/lab/addons/containters/database/postgres"
 	"github.com/auvitly/lab/tools/inventory"
 	"github.com/stretchr/testify/require"
 	"testing"
@@ -15,12 +16,12 @@ func TestMustRun_Success(t *testing.T) {
 		require.Nil(t, recover(), t.Name())
 	}()
 
-	inventory.MustRun(t, run, func(
+	inventory.MustRunTest(t, run, func(
 		t *testing.T,
 		test inventory.Test[
-			inventory.Empty,
-			*inventory.Out[inventory.Empty, error],
-		],
+		inventory.Empty,
+		*inventory.Out[inventory.Empty, error],
+	],
 	) {
 	},
 	)
@@ -31,12 +32,12 @@ func TestMustRun_ErrNotFoundTests(t *testing.T) {
 		require.ErrorIs(t, recover().(error), inventory.ErrNotFoundTests, t.Name())
 	}()
 
-	inventory.MustRun(t, run, func(
+	inventory.MustRunTest(t, run, func(
 		t *testing.T,
 		test inventory.Test[
-			*inventory.In[inventory.Empty],
-			*inventory.Out[inventory.Empty, error],
-		],
+		*inventory.In[inventory.Empty],
+		*inventory.Out[inventory.Empty, error],
+	],
 	) {
 	},
 	)
@@ -47,7 +48,7 @@ func TestMustRun_ErrFileConflictName(t *testing.T) {
 		require.ErrorIs(t, recover().(error), inventory.ErrFileConflictName, t.Name())
 	}()
 
-	inventory.MustRun(t, run, func(
+	inventory.MustRunTest(t, run, func(
 		t *testing.T,
 		test inventory.Test[inventory.Empty, inventory.Empty],
 	) {
@@ -60,23 +61,32 @@ func TestMustRun_ErrNotFoundTestData(t *testing.T) {
 		require.ErrorIs(t, recover().(error), inventory.ErrNotFoundTestData, t.Name())
 	}()
 
-	inventory.MustRun(t, run, func(
+	inventory.MustRunTest(t, run, func(
 		t *testing.T,
-		test inventory.Test[inventory.Empty, inventory.Empty],
+		test *inventory.Test[inventory.Empty, inventory.Empty],
 	) {
 	},
 	)
 }
 
-func TestMustRun_ErrFileNotFound(t *testing.T) {
+func TestX(t *testing.T) {
 	defer func() {
-		require.ErrorIs(t, recover().(error), inventory.ErrFileNotFound, t.Name())
+		require.ErrorIs(t, recover().(error), inventory.ErrNotFoundTestData, t.Name())
 	}()
 
-	inventory.MustRun(t, run, func(
-		t *testing.T,
-		test inventory.Test[inventory.Empty, inventory.Empty],
-	) {
-	},
+	var psql = postgres.MustNewDatabase(
+		postgres.WithStaticPort(5433),
+	)
+
+	inventory.MustRunTestWithAddons(t, run,
+		[]inventory.Addon{
+			psql,
+		},
+		func(
+			t *testing.T,
+			test *inventory.Test[inventory.Empty, inventory.Empty],
+		) {
+			psql.DSN.String()
+		},
 	)
 }

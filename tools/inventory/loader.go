@@ -3,9 +3,10 @@ package inventory
 import (
 	"embed"
 	"encoding/json"
-	"errors"
 	"fmt"
-	"reflect"
+	"os"
+	"path/filepath"
+	"strings"
 )
 
 // loadTests - parser test data_assistant from JSON.
@@ -23,6 +24,37 @@ func loadTests[T any](raw []byte) (tests []T, err error) {
 	}
 
 	return tests, nil
+}
+
+// obtainPath - finding file in folder with passed filename.
+func obtainPath(fs embed.FS, name string) (result string, err error) {
+	entities, err := fs.ReadDir(".")
+	if err != nil {
+		return "", fmt.Errorf("%w: %s", ErrFileNotFound, err.Error())
+	}
+
+	var founded []string
+
+	for _, entity := range entities {
+		if entity.IsDir() {
+			err = filepath.Walk(entity.Name(), func(path string, info os.FileInfo, err error) error {
+				if strings.Contains(info.Name(), fmt.Sprintf("%s.json", name)) {
+					founded = append(founded, path)
+				}
+
+				return nil
+			})
+		}
+	}
+
+	switch {
+	case len(founded) == 1:
+		return founded[0], nil
+	case len(founded) > 1:
+		return "", ErrFileConflictName
+	default:
+		return "", ErrFileNotFound
+	}
 }
 
 // LoadTests - parser test data_assistant from JSON by path.
@@ -53,40 +85,4 @@ func MustLoadTests[T any](fs embed.FS, path string) (tests []T) {
 	}
 
 	return tests
-}
-
-// UnmarshalJSON - implementation json unmarshal interface.
-func (o *Out[R, E]) UnmarshalJSON(raw []byte) error {
-	switch {
-	case reflect.DeepEqual(reflect.TypeOf((*error)(nil)), reflect.TypeOf((*E)(nil))):
-		var out struct {
-			Result R      `json:"result"`
-			Error  string `json:"error"`
-		}
-
-		if err := json.Unmarshal(raw, &out); err != nil {
-			return fmt.Errorf("json.Unmarshal: %w", err)
-		}
-
-		o.Result = out.Result
-		if len(out.Error) != 0 {
-			o.Error = any(errors.New(out.Error)).(E)
-		}
-	case reflect.DeepEqual(reflect.TypeOf((*Empty)(nil)), reflect.TypeOf((*E)(nil))):
-		var out struct {
-			Result R `json:"result"`
-		}
-
-		if err := json.Unmarshal(raw, &out); err != nil {
-			return fmt.Errorf("json.Unmarshal: %w", err)
-		}
-
-		o.Result = out.Result
-	default:
-		if err := json.Unmarshal(raw, o); err != nil {
-			return fmt.Errorf("json.Unmarshal: %w", err)
-		}
-	}
-
-	return nil
 }

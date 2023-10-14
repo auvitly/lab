@@ -1,6 +1,6 @@
 go 1.19
 
 use (
-	./addons/containters
 	./tools
+	./addons/containers/database/postgres
 )
