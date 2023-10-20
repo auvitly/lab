@@ -19,10 +19,6 @@ func loadTests[T any](raw []byte) (tests []T, err error) {
 		return nil, fmt.Errorf("%w: %s", ErrParsing, err)
 	}
 
-	if len(tests) == 0 {
-		return nil, ErrNotFoundTests
-	}
-
 	return tests, nil
 }
 
@@ -58,7 +54,7 @@ func obtainPath(fs embed.FS, name string) (result string, err error) {
 }
 
 // LoadTests - parser test data_assistant from JSON by path.
-func LoadTests[T any](fs embed.FS, path string) (tests []T, err error) {
+func LoadTests[D any](fs embed.FS, path string) (tests []D, err error) {
 	file, err := fs.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %s",
@@ -67,7 +63,7 @@ func LoadTests[T any](fs embed.FS, path string) (tests []T, err error) {
 		)
 	}
 
-	tests, err = loadTests[T](file)
+	tests, err = loadTests[D](file)
 	if err != nil {
 		return nil, err
 	}

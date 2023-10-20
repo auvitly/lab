@@ -11,7 +11,7 @@ import (
 // Addon - interface for addon matching.
 // The addon allows you to enable add-ons that will finish their work along with test processing.
 type Addon interface {
-	Init() error
+	Start() error
 	io.Closer
 }
 

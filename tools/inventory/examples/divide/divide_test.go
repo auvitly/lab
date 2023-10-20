@@ -3,7 +3,7 @@ package divide_test
 import (
 	"embed"
 	"github.com/auvitly/lab/tools/inventory"
-	"github.com/auvitly/lab/tools/inventory/test/examples/divide"
+	"github.com/auvitly/lab/tools/inventory/examples/divide"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

@@ -40,11 +40,19 @@ func MustNewDatabase(options ...Option) *Database {
 	return database
 }
 
-func (d *Database) Init() (err error) {
+func (d *Database) Start() (err error) {
 	if d.resource != nil {
 		return nil
 	}
 
+	if err = d.runDatabase(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (d *Database) runDatabase() error {
 	pool, err := dockertest.NewPool("")
 	if err != nil {
 		return fmt.Errorf("dockertest.NewPool: %w", err)
@@ -77,6 +85,12 @@ func (d *Database) Init() (err error) {
 		return fmt.Errorf("pool.RunWithOptions: %w", err)
 	}
 
+	d.buildDSN()
+
+	return nil
+}
+
+func (d *Database) buildDSN() {
 	d.DSN = new(url.URL)
 
 	d.DSN.Scheme = "postgres"
@@ -91,8 +105,6 @@ func (d *Database) Init() (err error) {
 	}
 
 	d.DSN.RawQuery = values.Encode()
-
-	return nil
 }
 
 func (d *Database) Close() error {
@@ -100,5 +112,12 @@ func (d *Database) Close() error {
 		return nil
 	}
 
-	return d.resource.Close()
+	if err := d.resource.Close(); err != nil {
+		return err
+	}
+
+	d.DSN = nil
+	d.resource = nil
+
+	return nil
 }
