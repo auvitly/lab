@@ -1,9 +1,10 @@
-package divide_test
+package method_test
 
 import (
 	"embed"
+	"github.com/auvitly/lab/examples/method"
 	"github.com/auvitly/lab/tools/inventory"
-	"github.com/auvitly/lab/tools/inventory/examples/divide"
+
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -11,7 +12,7 @@ import (
 //go:embed test
 var fs embed.FS
 
-func TestDivide(t *testing.T) {
+func TestMethod(t *testing.T) {
 	t.Parallel()
 
 	inventory.MustRun(t, fs, func(
@@ -24,7 +25,7 @@ func TestDivide(t *testing.T) {
 			*inventory.Out[float64, error],
 		],
 	) {
-		result, err := divide.Divide(test.In.Args.A, test.In.Args.B)
+		result, err := method.Method(test.In.Args.A, test.In.Args.B)
 		if err != nil {
 			assert.EqualError(t, err, test.Out.Error.Error(), test.Title)
 

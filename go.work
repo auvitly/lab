@@ -2,5 +2,6 @@ go 1.19
 
 use (
 	./tools
-	./addons/containers/database/postgres
+	./addons/docker
+	./examples
 )

@@ -43,7 +43,7 @@ import "github.com/auvitly/lab/tools/inventory"
 ```go
 func Multiply(a, b float64) (float64, error) {
 	if b == 0 {
-		return 0, errors.New("сan't divide by zero")
+		return 0, errors.New("сan't method by zero")
 	}
 	
 	return a/b, nil
@@ -116,7 +116,7 @@ func TestDivide(t *testing.T) {
       }
     },
     "out": {
-      "error": "сan't divide by zero"
+      "error": "сan't method by zero"
     }
   }
 ]
