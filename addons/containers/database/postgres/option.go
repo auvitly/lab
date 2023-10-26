@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/ory/dockertest/v3"
 	"github.com/ory/dockertest/v3/docker"
+	"time"
 )
 
 type Option func(cfg *config) error
@@ -105,6 +106,14 @@ func WithNetwork(network *dockertest.Network) Option {
 		}
 
 		cfg.networks = append(cfg.networks, network)
+
+		return nil
+	}
+}
+
+func WithWaitTime(wait time.Duration) Option {
+	return func(cfg *config) error {
+		cfg.maxWait = wait
 
 		return nil
 	}

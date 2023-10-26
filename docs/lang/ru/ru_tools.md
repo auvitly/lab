@@ -31,7 +31,7 @@ go get github.com/auvitly/lab@latest
 И импортировать один из инструментов. Например, `inventory`:
 
 ```go
-import "github.com/auvitly/lab/tools/inventory"
+import "github.com/auvitly/lab/tools/kit"
 ```
 
 <a name="test"></a>

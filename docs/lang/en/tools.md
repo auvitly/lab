@@ -7,5 +7,5 @@ go get github.com/auvitly/lab
 
 2. Import one of the available tools at the place of use. For example, to use models for tests:
 ```go
-import "github.com/auvitly/lab/inventory"
+import "github.com/auvitly/lab/kit"
 ```

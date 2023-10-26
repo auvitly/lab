@@ -3,7 +3,7 @@ package method_test
 import (
 	"embed"
 	"github.com/auvitly/lab/examples/method"
-	"github.com/auvitly/lab/tools/inventory"
+	"github.com/auvitly/lab/tools/kit"
 
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -15,14 +15,14 @@ var fs embed.FS
 func TestMethod(t *testing.T) {
 	t.Parallel()
 
-	inventory.MustRun(t, fs, func(
+	kit.RequireRun(t, fs, func(
 		t *testing.T,
-		test inventory.Test[
-			*inventory.In[struct {
+		test kit.Test[
+			*kit.In[struct {
 				A float64 `json:"a"`
 				B float64 `json:"b"`
 			}],
-			*inventory.Out[float64, error],
+			*kit.Out[float64, error],
 		],
 	) {
 		result, err := method.Method(test.In.Args.A, test.In.Args.B)

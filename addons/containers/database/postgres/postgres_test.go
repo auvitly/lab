@@ -1,14 +1,14 @@
 package postgres_test
 
 import (
-	"github.com/auvitly/lab/addons/containters/database/postgres"
+	"github.com/addons/docker/database/postgres"
 	"testing"
 )
 
 func TestDatabase_Init(t *testing.T) {
 	var db = postgres.MustNewDatabase()
 
-	if err := db.Init(); err != nil {
+	if err := db.Start(); err != nil {
 		panic(err)
 	}
 

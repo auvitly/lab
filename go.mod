@@ -1,9 +1,9 @@
-module github.com/auvitly/lab/tools
+module github.com/auvitly/lab
 
 go 1.21
 
 require (
-	github.com/golang/mock v1.6.0
+	github.com/auvitly/lab/tools v0.0.0-20231022004220-139c4bf39923
 	github.com/stretchr/testify v1.8.4
 )
 

@@ -5,6 +5,7 @@ import (
 	"github.com/ory/dockertest/v3"
 	"github.com/ory/dockertest/v3/docker"
 	"strconv"
+	"time"
 )
 
 type config struct {
@@ -19,6 +20,7 @@ type config struct {
 	tag         string
 	auth        docker.AuthConfiguration
 	networks    []*dockertest.Network
+	maxWait     time.Duration
 }
 
 var defaultConfig = config{
@@ -32,6 +34,7 @@ var defaultConfig = config{
 	},
 	repository: "postgres",
 	tag:        "latest",
+	maxWait:    time.Minute,
 }
 
 func env(key, value string) string {

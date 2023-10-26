@@ -1,4 +1,4 @@
-package inventory
+package kit
 
 import (
 	"embed"
@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func run[D TestData, T testing.TB](tester T, fs embed.FS, addons []Addon, testFunc func(t T, data D)) (err error) {
+func run[T testing.TB, D TestData](tester T, fs embed.FS, addons []Addon, testFunc func(t T, data D)) (err error) {
 	tester.Helper()
 	// * Looking for test data.
 	path, err := obtainPath(fs, tester.Name())
@@ -20,7 +20,7 @@ func run[D TestData, T testing.TB](tester T, fs embed.FS, addons []Addon, testFu
 		return err
 	}
 	// * Start addons.
-	if err = prepareAddons(tester, addons...); err != nil {
+	if err = useAddons(tester, addons...); err != nil {
 		return err
 	}
 	// * Choose runner.
@@ -49,7 +49,7 @@ func run[D TestData, T testing.TB](tester T, fs embed.FS, addons []Addon, testFu
 	return nil
 }
 
-func prepareAddons(tester testing.TB, addons ...Addon) (err error) {
+func useAddons(tester testing.TB, addons ...Addon) (err error) {
 	tester.Cleanup(func() {
 		for _, addon := range addons {
 			if err = addon.Close(); err != nil {

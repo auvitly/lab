@@ -1,17 +1,22 @@
 package postgres
 
 import (
+	"database/sql"
 	"fmt"
-	"github.com/ory/dockertest/v3"
-	"github.com/ory/dockertest/v3/docker"
 	"net"
 	"net/url"
+
+	_ "github.com/lib/pq"
+	"github.com/ory/dockertest/v3"
+	"github.com/ory/dockertest/v3/docker"
 )
 
 type Database struct {
+	// pool - containers pool.
+	pool *dockertest.Pool
 	// config - database configuration.
 	config config
-	// resource - container.
+	// resource - containers container.
 	resource *dockertest.Resource
 	// DSN - DB connection string.
 	DSN *url.URL
@@ -52,17 +57,19 @@ func (d *Database) Start() (err error) {
 	return nil
 }
 
-func (d *Database) runDatabase() error {
-	pool, err := dockertest.NewPool("")
+func (d *Database) runDatabase() (err error) {
+	d.pool, err = dockertest.NewPool("")
 	if err != nil {
 		return fmt.Errorf("dockertest.NewPool: %w", err)
 	}
 
-	if err = pool.Client.Ping(); err != nil {
+	if err = d.pool.Client.Ping(); err != nil {
 		return fmt.Errorf("pool.Client.Ping: %w", err)
 	}
 
-	d.resource, err = pool.RunWithOptions(&dockertest.RunOptions{
+	d.pool.MaxWait = d.config.maxWait
+
+	d.resource, err = d.pool.RunWithOptions(&dockertest.RunOptions{
 		Hostname:     d.config.host,
 		Repository:   d.config.repository,
 		Tag:          d.config.tag,
@@ -87,6 +94,10 @@ func (d *Database) runDatabase() error {
 
 	d.buildDSN()
 
+	if err = d.pool.Retry(d.retry); err != nil {
+		return fmt.Errorf("pool.Retry: %w", err)
+	}
+
 	return nil
 }
 
@@ -105,6 +116,19 @@ func (d *Database) buildDSN() {
 	}
 
 	d.DSN.RawQuery = values.Encode()
+}
+
+func (d *Database) retry() error {
+	db, err := sql.Open("postgres", d.DSN.String())
+	if err != nil {
+		return fmt.Errorf("sql.Open: %w", err)
+	}
+
+	if err = db.Ping(); err != nil {
+		return fmt.Errorf("db.Ping: %w", err)
+	}
+
+	return nil
 }
 
 func (d *Database) Close() error {

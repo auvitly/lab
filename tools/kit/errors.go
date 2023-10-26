@@ -1,4 +1,4 @@
-package inventory
+package kit
 
 import "errors"
 

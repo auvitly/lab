@@ -1,4 +1,4 @@
-package inventory
+package kit
 
 import (
 	"encoding/json"
@@ -27,11 +27,11 @@ type Test[I, O any] struct {
 	// Description - allows you to add an extended description for the test (improves the readability of tests).
 	Description string `json:"description"`
 	// Arguments - can use a query model/structure with a struct (if multiple arguments are required).
-	// * Note: use inventory.In, inventory.Empty  as a base solution.
+	// * Note: use kit.In, kit.Empty  as a base solution.
 	// * Can be replaced with any custom solution.
 	In I `json:"in"`
 	// Results - expected results.
-	// * Note: use inventory.Out as a base solutions.
+	// * Note: use kit.Out as a base solutions.
 	// * Can be replaced with any custom solution.
 	Out O `json:"out"`
 }
